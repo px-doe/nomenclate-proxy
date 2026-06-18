@@ -8,6 +8,10 @@ import { polaris } from '../conventions/polaris';
 import { atomic } from '../conventions/atomic';
 import type { Convention } from '../lib/types';
 
+export const config = {
+  maxDuration: 60,
+};
+
 type ConventionKey = 'tailwind' | 'material3' | 'atlassian' | 'polaris' | 'atomic';
 type ComponentType = 'COMPONENT' | 'COMPONENT_SET';
 
@@ -83,7 +87,7 @@ function buildSystemPrompt(): string {
 For each component you receive, you must:
 1. Determine if the name conforms to the convention rules ("conform"), violates them ("non_conform"), or is ambiguous ("ambiguous").
 2. If non-conforming or ambiguous, suggest a corrected name that follows the rules exactly.
-3. Provide a brief, specific justification (1-2 sentences) explaining your decision.
+3. Provide a brief, specific justification (1 short sentence, max 15 words) explaining your decision.
 
 Always return a JSON array — no markdown, no prose, no code blocks. Each element must have exactly these fields:
 - "id": string (the component's original id)
