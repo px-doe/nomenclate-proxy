@@ -68,10 +68,13 @@ function cleanRateLimitMap(): void {
   }
 }
 
-function setCorsHeaders(res: VercelResponse): void {
+function setCorsHeaders(res: VercelResponse,req: VercelRequest): void|VercelResponse {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 }
 
 function buildSystemPrompt(): string {
@@ -119,7 +122,7 @@ Return a JSON array with one object per component. No markdown, no code blocks â
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  setCorsHeaders(res);
+  setCorsHeaders(res,req);
 
   if (req.method === 'OPTIONS') {
     return res.status(204).end();
