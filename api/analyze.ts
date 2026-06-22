@@ -92,6 +92,21 @@ For each component, assign exactly one status:
 If the status is "non-conform" or "ambiguous", always suggest a corrected name following the rules exactly.
 Provide a brief, specific justification (1 short sentence, max 15 words) explaining your decision.
 
+## CRITICAL: different rules by component type
+
+**For type "COMPONENT_SET"** — this is the component's public name in the design system:
+Apply the full naming convention (e.g. "button", "input/text", "card/elevated").
+
+**For type "COMPONENT"** — these are variant instances inside a COMPONENT_SET:
+Figma encodes variant properties in the name as "Property=Value, Property=Value" (e.g. "Variant=Primary, State=Default, Size=Large").
+You MUST preserve this "key=value" format in suggestedName — Figma uses it to maintain variant property definitions. If you suggest a slash-separated path, Figma will destroy all variant property bindings.
+Rule: lowercase all keys and values, replace spaces with hyphens within each token.
+Examples:
+  "Variant=Primary, State=Default" → "variant=primary, state=default"
+  "Type=Icon Left, State=Over Press, Size=Large" → "type=icon-left, state=over-press, size=large"
+  "Color=Danger, State=Disabled" → "color=danger, state=disabled"
+If the COMPONENT name does NOT contain "=" signs, treat it like a COMPONENT_SET and apply the convention normally.
+
 Always return a JSON array — no markdown, no prose, no code blocks. Each element must have exactly these fields:
 - "id": string (the component's original id)
 - "currentName": string (the component's original name)
