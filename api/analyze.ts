@@ -29,7 +29,7 @@ interface AnalyzeRequest {
 interface AnalysisResult {
   id: string;
   currentName: string;
-  status: 'conform' | 'non_conform' | 'ambiguous';
+  status: 'conform' | 'non-conform' | 'ambiguous';
   suggestedName: string | null;
   justification: string;
 }
@@ -84,16 +84,19 @@ function setCorsHeaders(res: VercelResponse,req: VercelRequest): void|VercelResp
 function buildSystemPrompt(): string {
   return `You are a design system naming convention auditor. Your job is to evaluate Figma component names against a provided naming convention and return structured JSON analysis.
 
-For each component you receive, you must:
-1. Determine if the name conforms to the convention rules ("conform"), violates them ("non_conform"), or is ambiguous ("ambiguous").
-2. If non-conforming or ambiguous, suggest a corrected name that follows the rules exactly.
-3. Provide a brief, specific justification (1 short sentence, max 15 words) explaining your decision.
+For each component, assign exactly one status:
+- "conform": the name fully and unambiguously follows every convention rule. No correction needed.
+- "non-conform": the name clearly violates at least one rule (wrong case, wrong separator, forbidden pattern, missing category prefix, etc.). Use this whenever a rule is obviously broken.
+- "ambiguous": genuine uncertainty only — the convention doesn't cover this exact case, or the name may be an intentional internal abbreviation with no clear correct form. Use sparingly; prefer "non-conform" when any rule is clearly violated.
+
+If the status is "non-conform" or "ambiguous", always suggest a corrected name following the rules exactly.
+Provide a brief, specific justification (1 short sentence, max 15 words) explaining your decision.
 
 Always return a JSON array — no markdown, no prose, no code blocks. Each element must have exactly these fields:
 - "id": string (the component's original id)
 - "currentName": string (the component's original name)
-- "status": "conform" | "non_conform" | "ambiguous"
-- "suggestedName": string | null (null if status is "conform")
+- "status": "conform" | "non-conform" | "ambiguous"
+- "suggestedName": string | null (null only if status is "conform")
 - "justification": string`;
 }
 
